@@ -5,7 +5,8 @@ FROM ubuntu:18.04
 
 VOLUME ["/var/moodledata"]
 EXPOSE 80 443
-ADD moodle-config.php /var/www/html/config.php
+#ADD moodle-config.php /var/www/html/config.php
+ADD moodle-config-mariadb.php /var/www/html/config.php
 
 # Let the container know that there is no tty
 ENV DEBIAN_FRONTEND noninteractive

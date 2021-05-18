@@ -1,25 +1,46 @@
 version: '3'
 
 services:
-    dbapp:
-        image: mysql:5
-        restart: always
+    mariadb:
+        image: mariadb:10.5
+        ports:
+          - '3306:3306'
         volumes:
-            - db-volume:/var/lib/mysql
+          - db-volume:/var/lib/mysql
+        #environment:
+          # ALLOW_EMPTY_PASSWORD is recommended only for development.
+        #  - ALLOW_EMPTY_PASSWORD=yes
         env_file:
             - moodle_variables.env
-        networks:
-            - backendDB
-        deploy:
-            replicas: 1
-            restart_policy:
-                condition: any
+        healthcheck:
+          test: ['CMD', '/opt/bitnami/scripts/mariadb/healthcheck.sh']
+          interval: 15s
+          timeout: 5s
+          retries: 6
+    adminer:
+        image: adminer
+        restart: always
+        ports:
+            - 8080:8080
+    #dbapp:
+    #    image: mysql:5
+    #    restart: always
+    #    volumes:
+    #        - db-volume:/var/lib/mysql
+    #    env_file:
+    #        - moodle_variables.env
+    #    networks:
+    #        - backendDB
+    #    deploy:
+    #        replicas: 1
+    #        restart_policy:
+    #            condition: any
     moodleapp:
-        image: jhardison/moodle:latest
+        build: .
         links:
-            - dbapp:DB
+            - mariadb:DB
         depends_on: 
-            - dbapp
+            - mariadb
         restart: always
         volumes:
             - moodleapp-data:/var/moodledata
@@ -28,9 +49,9 @@ services:
             - 443:443
         env_file:
             - moodle_variables.env
-        networks:
-            - backendDB
-            - frontendWEB
+        #networks:
+        #    - backendDB
+        #    - frontendWEB
         deploy:
             replicas: 1
             restart_policy:
@@ -39,6 +60,8 @@ services:
 volumes: 
     db-volume:
     moodleapp-data:
+    mariadb_data:
+        driver: local
 
 networks:
     backendDB:

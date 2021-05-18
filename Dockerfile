@@ -2,7 +2,6 @@
 # 
 # Forked from Jonathan Hardison's docker version. https://github.com/jmhardison/docker-moodle
 FROM ubuntu:18.04
-LABEL maintainer="Sandor Mezei <mezeis87@gmail.com>"
 
 VOLUME ["/var/moodledata"]
 EXPOSE 80 443
@@ -26,7 +25,7 @@ RUN apt-get update && \
 		php-gd libapache2-mod-php postfix wget supervisor php-pgsql curl libcurl4 \
 		libcurl3-dev php-curl php-xmlrpc php-intl php-mysql git-core php-xml php-mbstring php-zip php-soap cron php-ldap && \
 	cd /tmp && \
-	git clone https://github.com/smezei/iomad-docker.git --depth=1 && \
+	git clone https://github.com/plunix/iomad.git --depth=1 && \
 	mv /tmp/iomad/* /var/www/html/ && \
 	rm /var/www/html/index.html && \
 	chown -R www-data:www-data /var/www/html && \
